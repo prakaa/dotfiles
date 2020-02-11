@@ -3,12 +3,12 @@ set mouse=a
 
 " Colors
 set background=dark
-colorscheme molokai " colorscheme
-syntax on "enable syntax processing
+colorscheme badwolf " colorscheme
 
 " Spaces & Tabs
 set tabstop=4 " number of spaces per TAB
 set softtabstop=4 "number of spaces in tab when editing
+set shiftwidth=4 "indent corresponds to single tab
 set expandtab "tabs = spaces
 set autoindent
 filetype plugin indent on
@@ -34,21 +34,16 @@ let mapleader="," " leader is comma
 call plug#begin('~/.local/share/nvim/plugged')
 
 " List of plugins
-Plug 'junegunn/vim-easy-align' " Easy alignment
 Plug 'tpope/vim-fugitive' " Git wrapper
-Plug 'scrooloose/syntastic'
-Plug 'tpope/vim-surround' "Vim surround
-Plug 'pangloss/vim-javascript' " JS
+Plug 'dense-analysis/ale' " asynch syntax
 Plug 'nathanaelkane/vim-indent-guides' " indent guides
-Plug 'valloric/youcompleteme' " autocompletion
 Plug 'vim-airline/vim-airline' " status bar
 Plug 'airblade/vim-gitgutter' "Git
 Plug 'kien/ctrlp.vim' " Fuzzy finder
-Plug 'JuliaEditorSupport/julia-vim'
+Plug 'valloric/youcompleteme' " Autocompletion
 Plug 'sheerun/vim-polyglot' " indentation, syntax, etc
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
-
-"
+Plug 'hdima/python-syntax' " Python syntax highlighting
+Plug 'jaxbot/semantic-highlight.vim' " semantic highlighting
 "   " Any valid git URL is allowed
 "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 "
@@ -85,25 +80,6 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-" Syntastic settings
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-" JavaScript
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_ngdoc = 1
-let g:javascript_plugin_flow = 1
-augroup javascript_folding
-    au!
-    au FileType javascript setlocal foldmethod=syntax
-augroup END
-
 " Indent guides
 let g:indent_guides_enable_on_vim_startup = 1
 
@@ -118,6 +94,20 @@ let g:ctrlp_map = '<Leader>t'
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_match_window = 'bottom, order:ttb' "Order top to bottom
 let g:ctrlp_switch_buffer = 0 "Always open new files in new buffer
+
+" ALE setting
+let g:ale_linters = {'python': ['flake8']}
+
+" Python.vim syntax highlighting
+let python_highlight_all = 1
+syntax on "enable syntax processing
+
+" Solarized color for semantic highlight
+let g:semanticGUIColors = ['#b58900', '#cb4b16', '#dc322f', '#d33682', '#6c71c4', '#268bd2', '#2aa198', '#859900']
+
+" YCM shortcuts
+nnoremap <leader>gt :YcmCompleter GoTo<CR>
+nnoremap <leader>gd :YcmCompleter GetDoc<CR>
 
 " Point YCM to the Pipenv created virtualenv, if possible
 " At first, get the output of 'pipenv --venv' command.
