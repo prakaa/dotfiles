@@ -13,6 +13,13 @@
 # then uncomment the following line to make Meta + arrow keys mapping work
 #set -ga terminal-overrides "*:kUP3=\e[1;9A,*:kDN3=\e[1;9B,*:kRIT3=\e[1;9C,*:kLFT3=\e[1;9D"
 
+# remap prefix from 'C-b' to 'C-e'
+unbind C-b
+set-option -g prefix C-e
+bind-key C-e send-prefix
+
+# Enable mouse control (clickable windows, panes, resizable panes)
+set -g mouse on 
 
 # -- windows & pane creation ---------------------------------------------------
 
