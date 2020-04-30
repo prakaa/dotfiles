@@ -10,7 +10,6 @@ set tabstop=4 " number of spaces per TAB
 set softtabstop=4 "number of spaces in tab when editing
 set shiftwidth=4 "indent corresponds to single tab
 set expandtab "tabs = spaces
-set autoindent
 filetype plugin indent on
 
 " UI Config
@@ -41,9 +40,8 @@ Plug 'vim-airline/vim-airline' " status bar
 Plug 'airblade/vim-gitgutter' "Git
 Plug 'kien/ctrlp.vim' " Fuzzy finder
 Plug 'valloric/youcompleteme' " Autocompletion
-Plug 'sheerun/vim-polyglot' " indentation, syntax, etc
 Plug 'hdima/python-syntax' " Python syntax highlighting
-Plug 'jaxbot/semantic-highlight.vim' " semantic highlighting
+
 "   " Any valid git URL is allowed
 "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 "
@@ -97,13 +95,12 @@ let g:ctrlp_switch_buffer = 0 "Always open new files in new buffer
 
 " ALE setting
 let g:ale_linters = {'python': ['flake8']}
+let g:ale_python_auto_pipenv = 1
 
 " Python.vim syntax highlighting
 let python_highlight_all = 1
 syntax on "enable syntax processing
 
-" Solarized color for semantic highlight
-let g:semanticGUIColors = ['#b58900', '#cb4b16', '#dc322f', '#d33682', '#6c71c4', '#268bd2', '#2aa198', '#859900']
 
 " YCM shortcuts
 nnoremap <leader>gt :YcmCompleter GoTo<CR>
@@ -121,7 +118,7 @@ let pipenv_venv_path = system('pipenv --venv')
 " the python executable.
 if shell_error == 0
   let venv_path = substitute(pipenv_venv_path, '\n', '', '')
-  let g:ycm_python_binary_path = venv_path . '/bin/python'
+  let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
 else
   let g:ycm_python_binary_path = 'python'
 endif
