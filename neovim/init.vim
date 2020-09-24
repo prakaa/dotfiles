@@ -41,6 +41,7 @@ Plug 'airblade/vim-gitgutter' "Git
 Plug 'kien/ctrlp.vim' " Fuzzy finder
 Plug 'valloric/youcompleteme' " Autocompletion
 Plug 'hdima/python-syntax' " Python syntax highlighting
+Plug 'lervag/vimtex' " LaTeX plugin
 
 "   " Any valid git URL is allowed
 "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -101,6 +102,9 @@ let g:ale_python_auto_pipenv = 1
 let python_highlight_all = 1
 syntax on "enable syntax processing
 
+" vimtex settings
+let g:tex_flavor = 'latex'
+
 
 " YCM shortcuts
 nnoremap <leader>gt :YcmCompleter GoTo<CR>
@@ -116,7 +120,7 @@ let pipenv_venv_path = system('pipenv --venv')
 " Remember, that 'pipenv --venv' only points to the root directory
 " of the virtual environment, so we have to append a full path to
 " the python executable.
-if shell_error == 0
+if v:shell_error == 0
   let venv_path = substitute(pipenv_venv_path, '\n', '', '')
   let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
 else
