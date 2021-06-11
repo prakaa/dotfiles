@@ -5,6 +5,14 @@ export PATH=$HOME/.local/bin:$PATH
 # Path to your oh-my-zsh installation.
 export ZSH="/home/abi/.oh-my-zsh"
 
+# Julia
+export JULIA_NUM_THREADS=15
+
+# Gurobi
+export GUROBI_HOME="/opt/gurobi912/linux64"
+export PATH="${PATH}:${GUROBI_HOME}/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
