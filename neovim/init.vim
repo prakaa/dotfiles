@@ -45,6 +45,8 @@ Plug 'lervag/vimtex' " LaTeX plugin
 Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
 Plug 'elzr/vim-json' " JSON
 Plug 'neovim/nvim-lspconfig' " neovim language server protocol
+Plugin 'godlygeek/tabular' " stuff for markdown
+Plugin 'plasticboy/vim-markdown' " stuff for markdown
 
 "   " Any valid git URL is allowed
 "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
