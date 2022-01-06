@@ -130,6 +130,12 @@ else
   let g:ycm_python_binary_path = 'python'
 endif
 
+if exists('g:vscode')
+    " VSCode extension
+else
+    " ordinary neovim
+endif
+
 " Plug options:
 "
 "| Option                  | Description                                      |
