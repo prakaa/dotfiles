@@ -38,6 +38,8 @@ else
     call plug#begin('~/.local/share/nvim/plugged')
 
     " List of plugins
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
     Plug 'tpope/vim-fugitive' " Git wrapper
     Plug 'dense-analysis/ale' " asynch syntax
     Plug 'nathanaelkane/vim-indent-guides' " indent guides
@@ -80,17 +82,13 @@ else
     "
     "
     "Plugin settings
-    " Start interactive EasyAlign in visual mode (e.g. vipga)
-    xmap ga <Plug>(EasyAlign)
-
-    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-    nmap ga <Plug>(EasyAlign)
 
     " Indent guides
     let g:indent_guides_enable_on_vim_startup = 1
 
     "Airline settings
     let g:airline#extensions#tabline#enabled = 1
+    let g:airline_powerline_fonts = 1
 
     "Git Gutter
     let g:gitgutter_enabled = 1
