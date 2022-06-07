@@ -38,19 +38,24 @@ else
     call plug#begin('~/.local/share/nvim/plugged')
 
     " List of plugins
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'tpope/vim-fugitive' " Git wrapper
-    Plug 'dense-analysis/ale' " asynch syntax
+    " Pretty stuff
+    Plug 'vim-airline/vim-airline' " airline
+    Plug 'vim-airline/vim-airline-themes' " airline
     Plug 'nathanaelkane/vim-indent-guides' " indent guides
+    " Git
+    Plug 'tpope/vim-fugitive' " Git wrapper
     Plug 'airblade/vim-gitgutter' "Git
+    " CtrlP
     Plug 'kien/ctrlp.vim' " Fuzzy finder
-    Plug 'lervag/vimtex' " LaTeX plugin
-    Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
+    " LSP config
     Plug 'neovim/nvim-lspconfig' " neovim language server protocol
-    Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
+    Plug 'williamboman/nvim-lsp-installer' " lsp installer
+    " Pandoc and markdown
     Plug 'vim-pandoc/vim-pandoc' " pandoc
     Plug 'vim-pandoc/vim-pandoc-syntax' " pandoc syntax
+    Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
+    " Julia
+    Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
