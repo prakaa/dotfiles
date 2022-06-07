@@ -36,6 +36,7 @@ else
     " ============================
     " Plugins downloaded to specified folder
     call plug#begin('~/.local/share/nvim/plugged')
+    
 
     " List of plugins
     " Pretty stuff
@@ -49,12 +50,15 @@ else
     Plug 'kien/ctrlp.vim' " Fuzzy finder
     " LSP config
     Plug 'neovim/nvim-lspconfig' " neovim language server protocol
-    Plug 'williamboman/nvim-lsp-installer' " lsp installer
+    Plug 'williamboman/nvim-lsp-installer' " lsp server installer
+    " Autocomplete
+    Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+    Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
     " VIm table
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
     Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
-
+    " Vim autocomplete
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
     "
@@ -82,8 +86,6 @@ else
     "
     " Initialize plugin system
     call plug#end()
-    "
-    "
     "Plugin settings
 
     " Indent guides
