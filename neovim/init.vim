@@ -50,9 +50,7 @@ else
     " LSP config
     Plug 'neovim/nvim-lspconfig' " neovim language server protocol
     Plug 'williamboman/nvim-lsp-installer' " lsp installer
-    " Pandoc and markdown
-    Plug 'vim-pandoc/vim-pandoc' " pandoc
-    Plug 'vim-pandoc/vim-pandoc-syntax' " pandoc syntax
+    " VIm table
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
     Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
