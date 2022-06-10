@@ -1,9 +1,7 @@
 if exists('g:vscode')
-    " VSCode extension
+    " VSCode specific settings
 else
     " ordinary neovim
-    set hlsearch "highlight matches
-    set incsearch "search as characters are entered
     " Mouse use
     set mouse=a
 
@@ -16,6 +14,7 @@ else
     set softtabstop=4 "number of spaces in tab when editing
     set shiftwidth=4 "indent corresponds to single tab
     set expandtab "tabs = spaces
+    set virtualedit=all
     filetype plugin indent on
 
     " UI Config
@@ -39,6 +38,22 @@ else
     call plug#begin('~/.local/share/nvim/plugged')
 
     " List of plugins
+    " Pretty stuff
+    Plug 'vim-airline/vim-airline' " airline
+    Plug 'vim-airline/vim-airline-themes' " airline
+    Plug 'nathanaelkane/vim-indent-guides' " indent guides
+    " Git
+    Plug 'tpope/vim-fugitive' " Git wrapper
+    Plug 'airblade/vim-gitgutter' "Git
+    " CtrlP
+    Plug 'kien/ctrlp.vim' " Fuzzy finder
+    " LSP config
+    Plug 'neovim/nvim-lspconfig' " neovim language server protocol
+    Plug 'williamboman/nvim-lsp-installer' " lsp installer
+    " VIm table
+    Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
+    " Julia
+    Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -65,37 +80,18 @@ else
     "   " Unmanaged plugin (manually installed and updated)
     "   Plug '~/my-prototype-plugin'
     "
-    " Plug options:
-    "
-    "| Option                  | Description                                      |
-    "| ----------------------- | ------------------------------------------------ |
-    "| `branch`/`tag`/`commit` | Branch/tag/commit of the repository to use       |
-    "| `rtp`                   | Subdirectory that contains Vim plugin            |
-    "| `dir`                   | Custom directory for the plugin                  |
-    "| `as`                    | Use different name for the plugin                |
-    "| `do`                    | Post-update hook (string or funcref)             |
-    "| `on`                    | On-demand loading: Commands or `<Plug>`-mappings |
-    "| `for`                   | On-demand loading: File types                    |
-    "| `frozen`                | Do not update unless explicitly specified        |
-    "
-    " More information: https://github.com/junegunn/vim-plug
-    "
     " Initialize plugin system
     call plug#end()
     "
     "
     "Plugin settings
-    " Start interactive EasyAlign in visual mode (e.g. vipga)
-    xmap ga <Plug>(EasyAlign)
-
-    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-    nmap ga <Plug>(EasyAlign)
 
     " Indent guides
     let g:indent_guides_enable_on_vim_startup = 1
 
     "Airline settings
     let g:airline#extensions#tabline#enabled = 1
+    let g:airline_powerline_fonts = 1
 
     "Git Gutter
     let g:gitgutter_enabled = 1
@@ -110,33 +106,35 @@ else
     let g:ale_linters = {'python': ['flake8']}
     let g:ale_python_auto_pipenv = 1
 
-    " Python.vim syntax highlighting
-    let python_highlight_all = 1
-    syntax on "enable syntax processing
+   "" Point YCM to the Pipenv created virtualenv, if possible
+   "" At first, get the output of 'pipenv --venv' command.
+   "let pipenv_venv_path = system('pipenv --venv')
+   "" The above system() call produces a non zero exit code whenever
+   "" a proper virtual environment has not been found.
+   "" So, second, we only point YCM to the virtual environment when
+   "" the call to 'pipenv --venv' was successful.
+   "" Remember, that 'pipenv --venv' only points to the root directory
+   "" of the virtual environment, so we have to append a full path to
+   "" the python executable.
+   "if v:shell_error == 0
+   "  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+   "  let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
+   "else
+   "  let g:ycm_python_binary_path = 'python'
+   "endif
 
-    " vimtex settings
-    let g:tex_flavor = 'latex'
-
-
-    " YCM shortcuts
-    nnoremap <leader>gt :YcmCompleter GoTo<CR>
-    nnoremap <leader>gd :YcmCompleter GetDoc<CR>
-
-    " Point YCM to the Pipenv created virtualenv, if possible
-    " At first, get the output of 'pipenv --venv' command.
-    let pipenv_venv_path = system('pipenv --venv')
-    " The above system() call produces a non zero exit code whenever
-    " a proper virtual environment has not been found.
-    " So, second, we only point YCM to the virtual environment when
-    " the call to 'pipenv --venv' was successful.
-    " Remember, that 'pipenv --venv' only points to the root directory
-    " of the virtual environment, so we have to append a full path to
-    " the python executable.
-    if v:shell_error == 0
-      let venv_path = substitute(pipenv_venv_path, '\n', '', '')
-      let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
-    else
-      let g:ycm_python_binary_path = 'python'
-    endif
+    " Plug options:
+    "
+    "| Option                  | Description                                      |
+    "| ----------------------- | ------------------------------------------------ |
+    "| `branch`/`tag`/`commit` | Branch/tag/commit of the repository to use       |
+    "| `rtp`                   | Subdirectory that contains Vim plugin            |
+    "| `dir`                   | Custom directory for the plugin                  |
+    "| `as`                    | Use different name for the plugin                |
+    "| `do`                    | Post-update hook (string or funcref)             |
+    "| `on`                    | On-demand loading: Commands or `<Plug>`-mappings |
+    "| `for`                   | On-demand loading: File types                    |
+    "| `frozen`                | Do not update unless explicitly specified        |
+    "
+    " More information: https://github.com/junegunn/vim-plug
 endif
-
