@@ -54,6 +54,12 @@ else
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
     Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
+    " pandoc
+    Plug 'vim-pandoc/vim-pandoc'
+    Plug 'vim-pandoc/vim-pandoc-syntax'
+    " deoplete autocomplete
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'Shougo/deoplete-lsp'
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -102,9 +108,16 @@ else
     let g:ctrlp_match_window = 'bottom, order:ttb' "Order top to bottom
     let g:ctrlp_switch_buffer = 0 "Always open new files in new buffer
 
-    " ALE setting
-    let g:ale_linters = {'python': ['flake8']}
-    let g:ale_python_auto_pipenv = 1
+    " vim pandoc
+    let g:pandoc#modules#disabled = ["folding"]
+
+    " deoplete
+    let g:deoplete#enable_at_startup = 1
+    " This is new style
+    call deoplete#custom#var('omni', 'input_patterns', {
+      \ 'pandoc': '@'
+      \})
+
 
    "" Point YCM to the Pipenv created virtualenv, if possible
    "" At first, get the output of 'pipenv --venv' command.
