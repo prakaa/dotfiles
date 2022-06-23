@@ -110,6 +110,7 @@ else
 
     " vim pandoc
     let g:pandoc#modules#disabled = ["folding"]
+    let g:pandoc#biblio#use_bibtool = 1
 
     " deoplete
     let g:deoplete#enable_at_startup = 1
