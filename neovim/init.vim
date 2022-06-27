@@ -58,7 +58,13 @@ else
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
     Plug 'JuliaEditorSupport/julia-vim' " Julia-vim
-    " Vim autocomplete
+    " pandoc
+    Plug 'vim-pandoc/vim-pandoc'
+    Plug 'vim-pandoc/vim-pandoc-syntax'
+    " deoplete autocomplete
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'Shougo/deoplete-lsp'
+
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
     "
@@ -104,26 +110,34 @@ else
     let g:ctrlp_match_window = 'bottom, order:ttb' "Order top to bottom
     let g:ctrlp_switch_buffer = 0 "Always open new files in new buffer
 
-    " ALE setting
-    let g:ale_linters = {'python': ['flake8']}
-    let g:ale_python_auto_pipenv = 1
+    " vim pandoc
+    let g:pandoc#modules#disabled = ["folding"]
+    let g:pandoc#biblio#use_bibtool = 1
 
-    " Point YCM to the Pipenv created virtualenv, if possible
-    " At first, get the output of 'pipenv --venv' command.
-    let pipenv_venv_path = system('pipenv --venv')
-    " The above system() call produces a non zero exit code whenever
-    " a proper virtual environment has not been found.
-    " So, second, we only point YCM to the virtual environment when
-    " the call to 'pipenv --venv' was successful.
-    " Remember, that 'pipenv --venv' only points to the root directory
-    " of the virtual environment, so we have to append a full path to
-    " the python executable.
-    if v:shell_error == 0
-      let venv_path = substitute(pipenv_venv_path, '\n', '', '')
-      let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
-    else
-      let g:ycm_python_binary_path = 'python'
-    endif
+    " deoplete
+    let g:deoplete#enable_at_startup = 1
+    " This is new style
+    call deoplete#custom#var('omni', 'input_patterns', {
+      \ 'pandoc': '@'
+      \})
+
+
+   "" Point YCM to the Pipenv created virtualenv, if possible
+   "" At first, get the output of 'pipenv --venv' command.
+   "let pipenv_venv_path = system('pipenv --venv')
+   "" The above system() call produces a non zero exit code whenever
+   "" a proper virtual environment has not been found.
+   "" So, second, we only point YCM to the virtual environment when
+   "" the call to 'pipenv --venv' was successful.
+   "" Remember, that 'pipenv --venv' only points to the root directory
+   "" of the virtual environment, so we have to append a full path to
+   "" the python executable.
+   "if v:shell_error == 0
+   "  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+   "  let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
+   "else
+   "  let g:ycm_python_binary_path = 'python'
+   "endif
 
     " Plug options:
     "
