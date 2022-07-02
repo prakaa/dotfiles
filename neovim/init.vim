@@ -51,9 +51,6 @@ else
     " LSP config
     Plug 'neovim/nvim-lspconfig' " neovim language server protocol
     Plug 'williamboman/nvim-lsp-installer' " lsp server installer
-    " Autocomplete
-    Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-    Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
     " VIm table
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
