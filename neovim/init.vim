@@ -1,6 +1,30 @@
 if exists('g:vscode')
     " VSCode specific settings
+    " Map up/down to scroll by visual lines
+    imap <up> <C-O>gk
+    imap <down> <C-O>gj
+    nmap <up> gk
+    nmap <down> gj
+    vmap <up> gk
+    vmap <down> gj
+    " Keep visual block selected after indent
+    vmap > >gv
+    vmap < <gv
+    " Yank from cursor to line end
+    nnoremap Y y$
 else
+    " Map up/down to scroll by visual lines
+    imap <up> <C-O>gk
+    imap <down> <C-O>gj
+    nmap <up> gk
+    nmap <down> gj
+    vmap <up> gk
+    vmap <down> gj
+    " Keep visual block selected after indent
+    vmap > >gv
+    vmap < <gv
+    " Yank from cursor to line end
+    nnoremap Y y$
     " ordinary neovim
     " Mouse use
     set mouse=a
@@ -61,6 +85,8 @@ else
     " deoplete autocomplete
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
     Plug 'Shougo/deoplete-lsp'
+    " syntax highlighting
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
