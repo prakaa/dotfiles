@@ -73,8 +73,9 @@ else
     " CtrlP
     Plug 'kien/ctrlp.vim' " Fuzzy finder
     " LSP config
-    Plug 'neovim/nvim-lspconfig' " neovim language server protocol
-    Plug 'williamboman/nvim-lsp-installer' " lsp server installer
+    Plug 'williamboman/mason.nvim'
+    Plug 'williamboman/mason-lspconfig.nvim'
+    Plug 'neovim/nvim-lspconfig'
     " VIm table
     Plug 'dhruvasagar/vim-table-mode' " table mode for markdown
     " Julia
@@ -82,9 +83,19 @@ else
     " pandoc
     Plug 'vim-pandoc/vim-pandoc'
     Plug 'vim-pandoc/vim-pandoc-syntax'
-    " deoplete autocomplete
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    Plug 'Shougo/deoplete-lsp'
+    " nvim - cmp for autocompletion + LSP support
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'hrsh7th/cmp-buffer'
+    Plug 'hrsh7th/cmp-path'
+    Plug 'hrsh7th/cmp-cmdline'
+    Plug 'hrsh7th/nvim-cmp'
+    " For vsnip users.
+    Plug 'hrsh7th/cmp-vsnip'
+    Plug 'hrsh7th/vim-vsnip'
+    " nvim-cmp for pandoc
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'aspeddro/cmp-pandoc.nvim'
     " syntax highlighting
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
@@ -115,9 +126,101 @@ else
     "
     " Initialize plugin system
     call plug#end()
-    "Plugin settings
 
-    " Indent guides
+    set completeopt=menu,menuone,noselect
+
+    "Plugin settings
+    "==========================================================================
+    "Lua
+    "=========================================================================
+    "
+    " Lua config for LSP
+    :lua require("mason").setup()
+lua << EOF
+    require("mason-lspconfig").setup({
+        ensure_installed = { "julials", "ltex", "prosemd_lsp", "jedi_language_server" }
+    })
+EOF
+    " Lua config for nvim-cmp
+lua <<EOF
+  -- Setup nvim-cmp.
+    local cmp = require'cmp'
+    cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      { name = 'cmp_pandoc' },
+    }, {
+      { name = 'buffer' },
+    })
+    })
+    -- Set configuration for specific filetype.
+    cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+      { name = 'buffer' },
+    })
+    })
+    -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+    })
+    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+    cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+    })
+
+    -- Setup lspconfig.
+    local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+    require('lspconfig')['julials'].setup {
+    capabilities = capabilities
+    }
+    require('lspconfig')['ltex'].setup {
+    capabilities = capabilities
+    }
+    require('lspconfig')['prosemd_lsp'].setup {
+    capabilities = capabilities
+    }
+    require('lspconfig')['jedi_language_server'].setup {
+    capabilities = capabilities
+    }
+EOF
+    
+    " Lua setup for pandoc nvim-cmp
+lua << EOF
+    require'cmp_pandoc'.setup()
+EOF
+    "========================================================================================
+    "General
+    "========================================================================================
+    " Indent guides                
     let g:indent_guides_enable_on_vim_startup = 1
 
     "Airline settings
@@ -137,43 +240,4 @@ else
     let g:pandoc#modules#disabled = ["folding"]
     let g:pandoc#biblio#use_bibtool = 1
 
-    " deoplete
-    let g:deoplete#enable_at_startup = 1
-    " This is new style
-    call deoplete#custom#var('omni', 'input_patterns', {
-      \ 'pandoc': '@'
-      \})
-
-
-   "" Point YCM to the Pipenv created virtualenv, if possible
-   "" At first, get the output of 'pipenv --venv' command.
-   "let pipenv_venv_path = system('pipenv --venv')
-   "" The above system() call produces a non zero exit code whenever
-   "" a proper virtual environment has not been found.
-   "" So, second, we only point YCM to the virtual environment when
-   "" the call to 'pipenv --venv' was successful.
-   "" Remember, that 'pipenv --venv' only points to the root directory
-   "" of the virtual environment, so we have to append a full path to
-   "" the python executable.
-   "if v:shell_error == 0
-   "  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
-   "  let g:ycm_python_binary_path = venv_path . '/bin/python3.6'
-   "else
-   "  let g:ycm_python_binary_path = 'python'
-   "endif
-
-    " Plug options:
-    "
-    "| Option                  | Description                                      |
-    "| ----------------------- | ------------------------------------------------ |
-    "| `branch`/`tag`/`commit` | Branch/tag/commit of the repository to use       |
-    "| `rtp`                   | Subdirectory that contains Vim plugin            |
-    "| `dir`                   | Custom directory for the plugin                  |
-    "| `as`                    | Use different name for the plugin                |
-    "| `do`                    | Post-update hook (string or funcref)             |
-    "| `on`                    | On-demand loading: Commands or `<Plug>`-mappings |
-    "| `for`                   | On-demand loading: File types                    |
-    "| `frozen`                | Do not update unless explicitly specified        |
-    "
-    " More information: https://github.com/junegunn/vim-plug
 endif
