@@ -68,8 +68,7 @@ else
     Plug 'vim-airline/vim-airline-themes' " airline
     Plug 'nathanaelkane/vim-indent-guides' " indent guides
     " Git
-    Plug 'tpope/vim-fugitive' " Git wrapper
-    Plug 'airblade/vim-gitgutter' "Git
+    Plug 'lewis6991/gitsigns.nvim'
     " CtrlP
     Plug 'kien/ctrlp.vim' " Fuzzy finder
     " LSP config
@@ -143,7 +142,6 @@ lua << EOF
         ensure_installed = { "julials", "ltex", "prosemd_lsp", "jedi_language_server" }
     })
 EOF
-
     "--------------------------------------------------------------------------
     " Lua config for nvim-cmp
     "--------------------------------------------------------------------------
@@ -175,6 +173,7 @@ lua <<EOF
       { name = 'luasnip' }, -- For luasnip users.
       { name = 'cmp_pandoc' },
       { name = 'treesitter' },
+      { name = 'path' },
     }, {
       { name = 'buffer' },
     })
@@ -221,10 +220,39 @@ lua <<EOF
     }
 EOF
     "--------------------------------------------------------------------------
-    " Lua setup for pandoc nvim-cmp
+    " Lua setup for gitsigns
     "--------------------------------------------------------------------------
 lua << EOF
-    require'cmp_pandoc'.setup()
+    require('gitsigns').setup()
+EOF
+    "--------------------------------------------------------------------------
+    " Lua setup for cmp_pandoc
+    "--------------------------------------------------------------------------
+lua << EOF
+     require'cmp_pandoc'.setup{
+        -- What types of files cmp-pandoc works.
+        -- 'pandoc', 'markdown' and 'rmd' (Rmarkdown)
+        -- @type: table of string
+        filetypes = { "pandoc", "markdown", "rmd" },
+        -- Customize bib documentation
+        bibliography = {
+        -- Enable bibliography documentation
+        -- @type: boolean
+        documentation = true,
+        -- Fields to show in documentation
+        -- @type: table of string
+        fields = { "type", "title", "author", "year" },
+        },
+        -- Crossref
+        crossref = {
+        -- Enable documetation
+        -- @type: boolean
+        documentation = true,
+        -- Use nabla.nvim to render LaTeX equation to ASCII
+        -- @type: boolean
+        enable_nabla = false,
+        }
+    }
 EOF
     "--------------------------------------------------------------------------
     " Lua setup for treesitter
@@ -273,9 +301,7 @@ EOF
     "Airline settings
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts = 1
-
-    "Git Gutter
-    let g:gitgutter_enabled = 1
+    highlight link GitGutterChangeLineNr Underlined
 
     "CtrlP settings
     let g:ctrlp_map = '<Leader>t'
