@@ -69,8 +69,6 @@ else
     Plug 'nathanaelkane/vim-indent-guides' " indent guides
     " Git
     Plug 'lewis6991/gitsigns.nvim'
-    " CtrlP
-    Plug 'kien/ctrlp.vim' " Fuzzy finder
     " LSP config
     Plug 'williamboman/mason.nvim'
     Plug 'williamboman/mason-lspconfig.nvim'
@@ -99,6 +97,8 @@ else
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
     " Terminal
     Plug 'akinsho/toggleterm.nvim', {'tag' : 'v2.*'}
+    " Fuzzy finder 
+    Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -314,22 +314,25 @@ lua << EOF
       }
     }
 EOF
+    "--------------------------------------------------------------------------
+    " Lua setup for telescope
+    "--------------------------------------------------------------------------
+lua << EOF
+    require('telescope').setup{}
+EOF
     "==========================================================================
     "General
     "==========================================================================
-    " Indent guides                
-    "let g:indent_guides_enable_on_vim_startup = 1
+    " Telescope options
+    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
     "Airline settings
     let g:airline#extensions#tabline#enabled = 1
     let g:airline_powerline_fonts = 1
     highlight link GitGutterChangeLineNr Underlined
-
-    "CtrlP settings
-    let g:ctrlp_map = '<Leader>t'
-    let g:ctrlp_cmd = 'CtrlP'
-    let g:ctrlp_match_window = 'bottom, order:ttb' "Order top to bottom
-    let g:ctrlp_switch_buffer = 0 "Always open new files in new buffer
 
     " vim pandoc
     let g:pandoc#modules#disabled = ["folding"]
