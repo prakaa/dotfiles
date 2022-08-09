@@ -1,9 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
-let g:netrw_dirhist_1='/home/abi/version_control/nem-data-analysis/NEMOSIS/nemosis.egg-info'
-let g:netrw_dirhist_2='/home/abi/version_control/nem-data-analysis/source_code/src'
-let g:netrw_dirhist_3='/home/abi/version_control/nem-data-analysis/source_code'
-let g:netrw_dirhist_4='/home/abi/version_control/nem-data-analysis/source_code/src'
-let g:netrw_dirhist_5='/home/abi/version_control/nem-data-analysis/data'
-let g:netrw_dirhist_6='/home/abi/version_control/nem-data-analysis/reports/figures/incident_25082018'
-let g:netrw_dirhist_7='/home/abi/version_control/nem-data-analysis/reports'
