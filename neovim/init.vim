@@ -31,12 +31,11 @@ else
 
     " Colors
     set background=dark
-    colorscheme badwolf " colorscheme
 
     " Spaces & Tabs
     set tabstop=4 " number of spaces per TAB
     set softtabstop=4 "number of spaces in tab when editing
-    set shiftwidth=4 "indent corresponds to single tab
+    set shiftwidth=4 "shift when using tab
     set expandtab "tabs = spaces
     set virtualedit=all
     filetype plugin indent on
@@ -64,6 +63,7 @@ else
 
     " List of plugins
     " Pretty stuff
+    Plug 'shaunsingh/nord.nvim'
     Plug 'vim-airline/vim-airline' " airline
     Plug 'vim-airline/vim-airline-themes' " airline
     Plug 'nathanaelkane/vim-indent-guides' " indent guides
@@ -90,9 +90,9 @@ else
     Plug 'hrsh7th/cmp-path'
     Plug 'hrsh7th/cmp-cmdline'
     Plug 'hrsh7th/nvim-cmp'
-    " For vsnip users.
-    Plug 'hrsh7th/cmp-vsnip'
-    Plug 'hrsh7th/vim-vsnip'
+    " For luasnip users.
+    Plug 'L3MON4D3/LuaSnip'
+    Plug 'saadparwaiz1/cmp_luasnip'
     " nvim-cmp for pandoc
     Plug 'nvim-lua/plenary.nvim'
     Plug 'aspeddro/cmp-pandoc.nvim'
@@ -126,22 +126,29 @@ else
     "
     " Initialize plugin system
     call plug#end()
-
-    set completeopt=menu,menuone,noselect
+    
+    " Colorscheme
+    colorscheme nord " colorscheme
 
     "Plugin settings
     "==========================================================================
     "Lua
-    "=========================================================================
-    "
+    "==========================================================================
+    "--------------------------------------------------------------------------
     " Lua config for LSP
-    :lua require("mason").setup()
+    "--------------------------------------------------------------------------
 lua << EOF
+    require("mason").setup()
     require("mason-lspconfig").setup({
         ensure_installed = { "julials", "ltex", "prosemd_lsp", "jedi_language_server" }
     })
 EOF
+
+    "--------------------------------------------------------------------------
     " Lua config for nvim-cmp
+    "--------------------------------------------------------------------------
+
+    set completeopt=menu,menuone,noselect
 lua <<EOF
   -- Setup nvim-cmp.
     local cmp = require'cmp'
@@ -149,12 +156,12 @@ lua <<EOF
     snippet = {
       -- REQUIRED - you must specify a snippet engine
       expand = function(args)
-        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
       end,
     },
     window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
       ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -165,8 +172,9 @@ lua <<EOF
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
+      { name = 'luasnip' }, -- For luasnip users.
       { name = 'cmp_pandoc' },
+      { name = 'treesitter' },
     }, {
       { name = 'buffer' },
     })
@@ -212,16 +220,55 @@ lua <<EOF
     capabilities = capabilities
     }
 EOF
-    
+    "--------------------------------------------------------------------------
     " Lua setup for pandoc nvim-cmp
+    "--------------------------------------------------------------------------
 lua << EOF
     require'cmp_pandoc'.setup()
 EOF
-    "========================================================================================
+    "--------------------------------------------------------------------------
+    " Lua setup for treesitter
+    "--------------------------------------------------------------------------
+lua << EOF
+    require'nvim-treesitter.configs'.setup {
+      -- A list of parser names, or "all"
+      ensure_installed = { "markdown", "latex", "python", "julia" },
+
+      -- Install parsers synchronously (only applied to `ensure_installed`)
+      sync_install = false,
+
+      -- Automatically install missing parsers when entering buffer
+      auto_install = true,
+
+      highlight = {
+        -- `false` will disable the whole extension
+        enable = true,
+
+        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+        -- Instead of true it can also be a list of languages
+        additional_vim_regex_highlighting = true,
+      },
+      indent = {
+        enable = true
+      },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<CR>',
+          scope_incremental = '<CR>',
+          node_incremental = '<TAB>',
+          node_decremental = '<S-TAB>',
+        },
+      }
+    }
+EOF
+    "==========================================================================
     "General
-    "========================================================================================
+    "==========================================================================
     " Indent guides                
-    let g:indent_guides_enable_on_vim_startup = 1
+    "let g:indent_guides_enable_on_vim_startup = 1
 
     "Airline settings
     let g:airline#extensions#tabline#enabled = 1
