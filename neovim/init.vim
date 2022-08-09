@@ -97,6 +97,8 @@ else
     Plug 'aspeddro/cmp-pandoc.nvim'
     " syntax highlighting
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    " Terminal
+    Plug 'akinsho/toggleterm.nvim', {'tag' : 'v2.*'}
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -141,6 +143,26 @@ lua << EOF
     require("mason-lspconfig").setup({
         ensure_installed = { "julials", "ltex", "prosemd_lsp", "jedi_language_server" }
     })
+EOF
+    "--------------------------------------------------------------------------
+    " Lua config for ToggleTerm
+    "--------------------------------------------------------------------------
+lua << EOF
+    require("toggleterm").setup({
+        close_on_exit = true,
+        open_mapping = [[<c-\>]]
+    })
+    function _G.set_terminal_keymaps()
+      local opts = {buffer = 0}
+      vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+      vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+      vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+      vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+      vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+      vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+    end
+    -- if you only want these mappings for toggle term use term://*toggleterm#* instead
+    vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 EOF
     "--------------------------------------------------------------------------
     " Lua config for nvim-cmp
