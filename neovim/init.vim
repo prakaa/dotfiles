@@ -105,6 +105,8 @@ else
     Plug 'akinsho/toggleterm.nvim', {'tag' : 'v2.*'}
     " Fuzzy finder 
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
+    " LaTeX equations to ASCII
+    Plug 'jbyuki/nabla.nvim'
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -141,6 +143,10 @@ else
     "==========================================================================
     "Lua
     "==========================================================================
+    "--------------------------------------------------------------------------
+    " Config for nabla.nvim
+    "--------------------------------------------------------------------------
+    nnoremap <leader>p :lua require("nabla").popup()<CR> " Customize with popup({border = ...})  : `single` (default), `double`, `rounded`
     "--------------------------------------------------------------------------
     " Lua config for LSP
     "--------------------------------------------------------------------------
