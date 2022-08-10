@@ -73,7 +73,6 @@ else
     Plug 'shaunsingh/nord.nvim'
     Plug 'vim-airline/vim-airline' " airline
     Plug 'vim-airline/vim-airline-themes' " airline
-    Plug 'nathanaelkane/vim-indent-guides' " indent guides
     " Git
     Plug 'lewis6991/gitsigns.nvim'
     " LSP config
