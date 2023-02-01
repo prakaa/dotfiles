@@ -108,7 +108,7 @@ else
     " LaTeX equations to ASCII
     Plug 'jbyuki/nabla.nvim'
     " Org mode
-    Plug 'nvim-orgmode/orgmode'
+    Plug 'nvim-neorg/neorg'
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -357,11 +357,19 @@ EOF
     " Lua setup for org mode
     "--------------------------------------------------------------------------
 lua << EOF
-require('orgmode').setup_ts_grammar()
-require('orgmode').setup({
-  org_agenda_files = {'~/Dropbox/org/*', '~/my-orgs/**/*'},
-  org_default_notes_file = '~/Dropbox/org/refile.org',
-})
+require('neorg').setup {
+    load = {
+        ["core.defaults"] = {}, -- Loads default behaviour
+        ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
+        ["core.norg.dirman"] = { -- Manages Neorg workspaces
+            config = {
+                workspaces = {
+                    notes = "~/notes",
+                },
+            },
+        },
+    },
+}
 EOF
     "==========================================================================
     "General
