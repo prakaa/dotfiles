@@ -107,6 +107,8 @@ else
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
     " LaTeX equations to ASCII
     Plug 'jbyuki/nabla.nvim'
+    " Org mode
+    Plug 'nvim-orgmode/orgmode'
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -136,13 +138,14 @@ else
     " Initialize plugin system
     call plug#end()
     
-    " Colorscheme
-    colorscheme nord " colorscheme
-
     "Plugin settings
     "==========================================================================
     "Lua
     "==========================================================================
+    " Color scheme
+lua << EOF
+    vim.cmd[[colorscheme nord]]
+EOF
     "--------------------------------------------------------------------------
     " Config for nabla.nvim
     "--------------------------------------------------------------------------
@@ -179,7 +182,6 @@ EOF
     "--------------------------------------------------------------------------
     " Lua config for nvim-cmp
     "--------------------------------------------------------------------------
-
     set completeopt=menu,menuone,noselect
 lua <<EOF
   -- Setup nvim-cmp.
@@ -210,6 +212,7 @@ lua <<EOF
       { name = 'cmp_pandoc' },
       { name = 'treesitter' },
       { name = 'path' },
+      { name = 'orgmode' },
     }, {
       { name = 'buffer' },
     })
@@ -240,7 +243,7 @@ lua <<EOF
     })
 
     -- Setup lspconfig.
-    local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+   local capabilities = require('cmp_nvim_lsp').default_capabilities()
     -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
     require('lspconfig')['julials'].setup {
     capabilities = capabilities
@@ -312,7 +315,7 @@ EOF
 lua << EOF
     require'nvim-treesitter.configs'.setup {
       -- A list of parser names, or "all"
-      ensure_installed = { "markdown", "latex", "python", "julia" },
+      ensure_installed = { "markdown", "latex", "python", "julia", "org" },
 
       -- Install parsers synchronously (only applied to `ensure_installed`)
       sync_install = false,
@@ -349,6 +352,16 @@ EOF
     "--------------------------------------------------------------------------
 lua << EOF
     require('telescope').setup{}
+EOF
+    "--------------------------------------------------------------------------
+    " Lua setup for org mode
+    "--------------------------------------------------------------------------
+lua << EOF
+require('orgmode').setup_ts_grammar()
+require('orgmode').setup({
+  org_agenda_files = {'~/Dropbox/org/*', '~/my-orgs/**/*'},
+  org_default_notes_file = '~/Dropbox/org/refile.org',
+})
 EOF
     "==========================================================================
     "General
