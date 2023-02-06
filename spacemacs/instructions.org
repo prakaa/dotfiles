@@ -1,0 +1,42 @@
+* Spacemacs installation instructions
+
+** Dotfiles/config file
+*** ~.spacemacs~
+- Config layers for spacemacs
+- Put in home directory
+
+**** ~dotspacemacs/user-config~
+- Put emacs-lisp snippets in this function
+
+**** ~org-mode~ config
+- This needs to go within the ~with-eval-after-load~ block
+
+** Emacs daemon
+- Place the following block in ~\~/.config/systemd/user/emacs.service~:
+
+  #+BEGIN_SRC bash
+    [Unit]
+    Description=Emacs text editor
+    Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
+
+    [Service]
+    Type=forking
+    ExecStart=/usr/bin/emacs --daemon
+    ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
+    Environment=SSH_AUTH_SOCK=%t/keyring/ssh
+    Restart=on-failure
+
+    [Install]
+    WantedBy=default.target
+  #+END_SRC
+
+- Then run the following to enable daemon on startup:
+ 
+  #+BEGIN_SRC bash
+  systemctl enable --user emacs
+  systemctl start --user emacs
+  #+END_SRC
+
+
+
+
