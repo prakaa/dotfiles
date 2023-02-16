@@ -67,7 +67,10 @@ This function should only modify configuration layer settings."
      treemacs
      tree-sitter
      syntax-checking
-     version-control
+     (version-control :variables
+                      version-control-diff-tool 'git-gutter+
+                      version-control-diff-side 'left
+                      version-control-global-margin t)
      )
 
    ;; List of additional packages that will be installed without being wrapped
@@ -571,8 +574,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'markdown-mode-hook 'visual-line-mode)
   ;; visual fill column mode puts everything in a column
-  (add-hook 'org-mode-hook 'visual-fill-column-mode)
-  (add-hook 'markdown-mode-hook 'visual-fill-column-mode)
+  (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
 )
 
 
@@ -591,42 +593,28 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (defun general-config ()
+  )
   ;; space around
-  (set-fringe-mode 10)
-  ;; line numbers with git gutter
-  (global-linum-mode)
-  (git-gutter:linum-setup)
+  (set-fringe-mode 20)
+  ;; line numbers
+  (global-display-line-numbers-mode 1)
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
+                  spacemacs-buffer-mode-hook
                   term-mode-hook
                   shell-mode-hook
                   treemacs-mode-hook
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
-  )
+  ;; git-gutter+ config
+  (setq git-gutter+-modified-sign "  ") ;; two space
+  (setq git-gutter+-added-sign "++")    ;; multiple character is OK
+  (setq git-gutter+-deleted-sign "--")
+  (set-face-background 'git-gutter+-modified "purple") ;; background color
+  (set-face-foreground 'git-gutter+-added "green")
+  (set-face-foreground 'git-gutter+-deleted "red")
   ;; visual fill column mode puts everything in a column
   (setq visual-fill-column-width 100)
-  (setq-default visual-fill-column-center-text t)
-  ;; git gutter appearance
-  (custom-set-variables
-   '(git-gutter:modified-sign "  ") ;; two purple space for modified
-   '(git-gutter:added-sign "++")    ;; two plus for added
-   '(git-gutter:deleted-sign "--")) ;; two minus for deleted
-
-  (set-face-background 'git-gutter:modified "purple") ;; background color
-  (set-face-foreground 'git-gutter:added "green")
-  (set-face-foreground 'git-gutter:deleted "red")
-
-  ;; helm-bibtex config
-  ;; bibliography location
-  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"))
-  (setq bibtex-completion-library-path '("~/Dropbox/zotero"))
-  ;; default behaviour for helm-bibtex
-  (setq  bibtex-completion-cite-prompt-for-optional-arguments nil)
-  (autoload 'helm-bibtex "helm-bibtex" "" t)
-  (helm-delete-action-from-source "Insert Citation" helm-source-bibtex)
-  (helm-add-action-to-source "Insert Citation" 'helm-bibtex-insert-citation helm-source-bibtex 0)
-)
 
   ;; Org mode config
   (with-eval-after-load 'org
@@ -634,18 +622,24 @@ before packages are loaded."
   (setq org-hide-emphasis-markers t)
   (setq org-ellipsis "  ▼")
   (setq org-startup-indented t)
-  ;; fix for some issues
-  (setq org-element-use-cache nil)
   ;; agenda config
   (setq org-agenda-files '("~/Dropbox/org"))
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-into-drawer t)
   (setq org-journal-enable-agenda-integration t)
+  ;; bibliography location
+  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"))
+  (setq bibtex-completion-library-path '("~/Dropbox/zotero"))
+  ;; default behaviour for helm-bibtex
+  (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
   ;; babel config
   (org-babel-do-load-languages
    'org-babel-load-languages '((C . t)
                                (python . t)
                                (julia . t)))
+  )
+  ;; LaTeX PDF output
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 
   ;; capture templates
   (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
@@ -667,9 +661,16 @@ before packages are loaded."
          entry (file+headline "~/Dropbox/org/notes.org" "Random Notes")
          "** %?"
          :empty-lines 0)
-      )
-    )
+        ("m" "Meeting"
+          entry (file+datetree "~/Dropbox/org/meetings.org")
+          "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
+          :tree-type week
+          :clock-in t
+          :clock-resume t
+          :empty-lines 0)
+        )
   )
+)
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (defun dotspacemacs/emacs-custom-settings ()
@@ -683,11 +684,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
- '(git-gutter:added-sign "++")
- '(git-gutter:deleted-sign "--")
- '(git-gutter:modified-sign "  ")
  '(org-agenda-files
-   '("/home/abi/Dropbox/org/climbing.org" "/home/abi/Dropbox/org/notes.org" "/home/abi/Dropbox/org/tasks.org" "/home/abi/Dropbox/journal/2023-02-06"))
+   '("/home/abi/Dropbox/org/climbing.org" "/home/abi/Dropbox/org/meetings.org" "/home/abi/Dropbox/org/notes.org" "/home/abi/Dropbox/org/tasks.org"))
  '(package-selected-packages
    '(org-wild-notifier company-quickhelp magit-delta org-journal yatemplate counsel-projectile counsel dap-mode lsp-docker bui flyspell-correct-ivy ivy-avy ivy-bibtex ivy-hydra ivy-purpose ivy-xref ivy-yasnippet lsp-ivy smex swiper ivy wgrep org-cliplink org-contrib org-download org-mime org-pomodoro org-present org-projectile org-category-capture org-ref org-rich-yank org-superstar orgit-forge orgit org cmake-mode yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil tree-sitter-langs toc-org texfrag terminal-here term-cursor symon symbol-overlay string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle shell-pop restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pdf-view-restore pcre2el password-generator paradox pandoc-mode ox-pandoc overseer open-junk-file nose nameless multi-vterm multi-term multi-line mmm-mode markdown-toc macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-pyright lsp-origami lsp-latex lsp-julia lorem-ipsum live-py-mode link-hint julia-repl inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-c-yasnippet helm-bibtex helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md fuzzy forge font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word cython-mode company-reftex company-math company-auctex company-anaconda column-enforce-mode code-cells clean-aindent-mode citeproc centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk alert aggressive-indent ace-link ace-jump-helm-line ac-ispell)))
 (custom-set-faces
