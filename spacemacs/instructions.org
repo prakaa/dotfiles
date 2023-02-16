@@ -7,6 +7,8 @@
 
 **** ~dotspacemacs/user-config~
 - Put emacs-lisp snippets in this function
+- Putting ~setq~ or functions within ~general-config ()~ may not work
+  + Instead, put these straight into ~user-config~
 
 **** ~org-mode~ config
 - This needs to go within the ~with-eval-after-load~ block
