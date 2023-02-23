@@ -81,7 +81,9 @@ This function should only modify configuration layer settings."
    ;; `dotspacemacs/user-config'. To use a local version of a package, use the
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      jupyter
+                                      )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -594,6 +596,8 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (defun general-config ()
   )
+  ;; jupyter
+  (require 'jupyter)
   ;; space around
   (set-fringe-mode 20)
   ;; line numbers
@@ -616,6 +620,20 @@ before packages are loaded."
   ;; visual fill column mode puts everything in a column
   (setq visual-fill-column-width 100)
 
+  ;; bibliography location
+  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"))
+  (setq bibtex-completion-library-path '("~/Dropbox/zotero"))
+  ;; bibtex completion formats
+  (setq bibtex-completion-format-citation-functions
+        '((org-mode      . org-ref-helm-bibtex-insert-citation)
+          (latex-mode    . bibtex-completion-format-citation-cite)
+          (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+          (default       . bibtex-completion-format-citation-default)))
+  ;; default behaviour for helm-bibtex
+  (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
+  (define-key org-mode-map (kbd "SPC i c") 'helm-bibtex)
+  (define-key markdown-mode-map (kbd "SPC i c") 'helm-bibtex)
+
   ;; Org mode config
   (with-eval-after-load 'org
   ;; here goes your Org config :)
@@ -627,16 +645,15 @@ before packages are loaded."
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-into-drawer t)
   (setq org-journal-enable-agenda-integration t)
-  ;; bibliography location
-  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"))
-  (setq bibtex-completion-library-path '("~/Dropbox/zotero"))
-  ;; default behaviour for helm-bibtex
-  (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
   ;; babel config
   (org-babel-do-load-languages
-   'org-babel-load-languages '((C . t)
+   'org-babel-load-languages '(
+                               (C . t)
                                (python . t)
-                               (julia . t)))
+                               (julia . t)
+                               (jupyter . t)
+                               )
+   )
   )
   ;; LaTeX PDF output
   (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
@@ -693,7 +710,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(fixed-pitch ((t (:height 0.9 :family "Fira Code"))))
+ '(fixed-pitch ((t (:height 1.1 :family "Fira Code"))))
  '(org-block ((t (:inherit fixed-pitch))))
  '(org-code ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-info ((t (:foreground "dark orange"))))
@@ -706,5 +723,5 @@ This function is called at the very end of Spacemacs initialization."
  '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
- '(variable-pitch ((t (:height 1.4 :family "Cantarell")))))
+ '(variable-pitch ((t (:height 1.3 :family "Cantarell")))))
 )
