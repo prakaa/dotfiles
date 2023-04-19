@@ -32,14 +32,12 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(rust
-     yaml
+   '(
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t)
      bibtex
      ;; better-defaults
      emacs-lisp
-     eww
      (git :variables
           git-enable-magit-delta-plugin t)
      helm
@@ -65,14 +63,15 @@ This function should only modify configuration layer settings."
      spell-checking
      spacemacs-org
      spacemacs-visual
+     syntax-checking
      templates
      treemacs
      tree-sitter
-     syntax-checking
      (version-control :variables
                       version-control-diff-tool 'git-gutter+
                       version-control-diff-side 'left
                       version-control-global-margin t)
+     yaml
      )
 
    ;; List of additional packages that will be installed without being wrapped
@@ -258,7 +257,8 @@ It should only modify the values of Spacemacs settings."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(wombat
+                         spacemacs-dark
                          spacemacs-light)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
@@ -623,7 +623,8 @@ before packages are loaded."
   (setq visual-fill-column-width 100)
 
   ;; bibliography location
-  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"))
+  (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"
+                                         "~/version_control/phd_thesis/source/references.bib"))
   (setq bibtex-completion-library-path '("~/Dropbox/zotero"))
   ;; bibtex completion formats
   (setq bibtex-completion-format-citation-functions
@@ -634,8 +635,7 @@ before packages are loaded."
   ;; default behaviour for helm-bibtex
   (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
   (define-key org-mode-map (kbd "SPC i c") 'helm-bibtex)
-  (define-key markdown-mode-map (kbd "SPC i c") 'helm-bibtex)
-
+  (define-key evil-command-window-mode-map (kbd "SPC i c") 'helm-bibtex)
   ;; Org mode config
   (with-eval-after-load 'org
   ;; here goes your Org config :)
@@ -697,22 +697,26 @@ before packages are loaded."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
+ 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(evil-want-Y-yank-to-eol nil)
+ '(ispell-dictionary nil)
  '(org-agenda-files
    '("/home/abi/Dropbox/org/climbing.org" "/home/abi/Dropbox/org/meetings.org" "/home/abi/Dropbox/org/notes.org" "/home/abi/Dropbox/org/tasks.org"))
  '(package-selected-packages
-   '(cargo counsel-gtags flycheck-rust ggtags helm-gtags racer ron-mode rust-mode toml-mode yaml-mode org-wild-notifier company-quickhelp magit-delta org-journal yatemplate counsel-projectile counsel dap-mode lsp-docker bui flyspell-correct-ivy ivy-avy ivy-bibtex ivy-hydra ivy-purpose ivy-xref ivy-yasnippet lsp-ivy smex swiper ivy wgrep org-cliplink org-contrib org-download org-mime org-pomodoro org-present org-projectile org-category-capture org-ref org-rich-yank org-superstar orgit-forge orgit org cmake-mode yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil tree-sitter-langs toc-org texfrag terminal-here term-cursor symon symbol-overlay string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle shell-pop restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pdf-view-restore pcre2el password-generator paradox pandoc-mode ox-pandoc overseer open-junk-file nose nameless multi-vterm multi-term multi-line mmm-mode markdown-toc macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-pyright lsp-origami lsp-latex lsp-julia lorem-ipsum live-py-mode link-hint julia-repl inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-c-yasnippet helm-bibtex helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md fuzzy forge font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word cython-mode company-reftex company-math company-auctex company-anaconda column-enforce-mode code-cells clean-aindent-mode citeproc centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk alert aggressive-indent ace-link ace-jump-helm-line ac-ispell)))
+   '(afternoon-theme alect-themes all-the-icons ample-theme ample-zen-theme anaconda-mode anti-zenburn-theme apropospriate-theme auctex badwolf-theme birds-of-paradise-plus-theme bubbleberry-theme busybee-theme cherry-blossom-theme chocolate-theme clues-theme color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow company cyberpunk-theme dakrone-theme darkmine-theme darkokai-theme django-theme doom-themes dracula-theme espresso-theme smartparens exotica-theme eziam-themes farmhouse-themes flatland-theme flatui-theme flycheck package-lint helm yaml ghub closql emacsql gandalf-theme gotham-theme grandshell-theme gruber-darker-theme gruvbox-theme hc-zenburn-theme helm-core hemisu-theme heroku-theme inkpot-theme ir-black-theme jazz-theme jbeans-theme websocket kaolin-themes light-soap-theme lsp-mode treemacs posframe markdown-mode lush-theme madhat2r-theme magit git-commit with-editor magit-section material-theme minimal-theme modus-themes moe-theme molokai-theme monochrome-theme monokai-theme vterm mustang-theme niflheim-theme naquadah-theme noctilux-theme obsidian-theme occidental-theme oldlace-theme omtose-phellack-theme projectile parsebib organic-green-theme phoenix-dark-mono-theme phoenix-dark-pink-theme planet-theme transient compat professional-theme purple-haze-theme ht railscasts-theme rebecca-theme reverse-theme seti-theme smyx-theme soft-charcoal-theme soft-morning-theme soft-stone-theme solarized-theme soothe-theme spacegray-theme spaceline dash subatomic-theme subatomic256-theme sublime-themes sunny-day-theme tango-2-theme tango-plus-theme tangotango-theme tao-theme toxi-theme twilight-anti-bright-theme twilight-bright-theme twilight-theme ujelly-theme underwater-theme white-sand-theme zen-and-art-theme zenburn-theme zonokai-emacs async evil cargo counsel-gtags flycheck-rust ggtags helm-gtags racer ron-mode rust-mode toml-mode yaml-mode org-wild-notifier company-quickhelp magit-delta org-journal yatemplate counsel-projectile counsel dap-mode lsp-docker bui flyspell-correct-ivy ivy-avy ivy-bibtex ivy-hydra ivy-purpose ivy-xref ivy-yasnippet lsp-ivy smex swiper ivy wgrep org-cliplink org-contrib org-download org-mime org-pomodoro org-present org-projectile org-category-capture org-ref org-rich-yank org-superstar orgit-forge orgit org cmake-mode yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil tree-sitter-langs toc-org texfrag terminal-here term-cursor symon symbol-overlay string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle shell-pop restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pdf-view-restore pcre2el password-generator paradox pandoc-mode ox-pandoc overseer open-junk-file nose nameless multi-vterm multi-term multi-line mmm-mode markdown-toc macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-pyright lsp-origami lsp-latex lsp-julia lorem-ipsum live-py-mode link-hint julia-repl inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-c-yasnippet helm-bibtex helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md fuzzy forge font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word cython-mode company-reftex company-math company-auctex company-anaconda column-enforce-mode code-cells clean-aindent-mode citeproc centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk alert aggressive-indent ace-link ace-jump-helm-line ac-ispell)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fixed-pitch ((t (:height 1.1 :family "Fira Code"))))
+ '(highlight ((t nil)))
+ '(hl-line ((t (:background "burlywood" :foreground "black"))))
  '(org-block ((t (:inherit fixed-pitch))))
  '(org-code ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-info ((t (:foreground "dark orange"))))
