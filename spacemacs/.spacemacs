@@ -634,8 +634,11 @@ before packages are loaded."
           (default       . bibtex-completion-format-citation-default)))
   ;; default behaviour for helm-bibtex
   (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
-  (define-key org-mode-map (kbd "SPC i c") 'helm-bibtex)
-  (define-key evil-command-window-mode-map (kbd "SPC i c") 'helm-bibtex)
+  (define-key global-map (kbd "C-c i") 'helm-bibtex)
+  (with-eval-after-load 'helm-bibtex
+  (helm-delete-action-from-source "Insert citation" helm-source-bibtex)
+  (helm-add-action-to-source "Insert citation" 'helm-bibtex-insert-citation helm-source-bibtex 0)
+  )
   ;; Org mode config
   (with-eval-after-load 'org
   ;; here goes your Org config :)
@@ -715,8 +718,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(fixed-pitch ((t (:height 1.1 :family "Fira Code"))))
- '(highlight ((t nil)))
- '(hl-line ((t (:background "burlywood" :foreground "black"))))
+ '(highlight ((t (:background "tomato" :foreground "white"))))
+ '(hl-line ((t (:background "slate gray" :foreground "black"))))
  '(org-block ((t (:inherit fixed-pitch))))
  '(org-code ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-info ((t (:foreground "dark orange"))))
@@ -729,5 +732,6 @@ This function is called at the very end of Spacemacs initialization."
  '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+ `(tooltip ((t (:background "dim gray" :foreground "black"))))
  '(variable-pitch ((t (:height 1.3 :family "Cantarell")))))
 )
