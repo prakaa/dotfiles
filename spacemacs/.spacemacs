@@ -442,8 +442,14 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers t
-
+   dotspacemacs-line-numbers
+    '(
+      :disabled-for-modes dired-mode
+                          doc-view-mode
+                          org-mode
+                          pdf-view-mode
+                          text-mode
+      :size-limit-kb 1000)
    ;; Code folding method. Possible values are `evil', `origami' and `vimish'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -609,16 +615,6 @@ before packages are loaded."
   (require 'jupyter)
   ;; space around
   (set-fringe-mode 20)
-  ;; line numbers
-  (global-display-line-numbers-mode 1)
-  ;; Disable line numbers for some modes
-  (dolist (mode '(org-mode-hook
-                  spacemacs-buffer-mode-hook
-                  term-mode-hook
-                  shell-mode-hook
-                  treemacs-mode-hook
-                  eshell-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
   ;; git-gutter+ config
   (setq git-gutter+-modified-sign "  ") ;; two space
   (setq git-gutter+-added-sign "++")    ;; multiple character is OK
