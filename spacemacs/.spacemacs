@@ -85,6 +85,8 @@ This function should only modify configuration layer settings."
    dotspacemacs-additional-packages '(
                                       jupyter
                                       all-the-icons
+                                      sqlite3
+                                      quarto-mode
                                       )
 
    ;; A list of packages that cannot be updated.
@@ -613,6 +615,8 @@ before packages are loaded."
   (define-key evil-visual-state-map "k" 'evil-previous-visual-line)
   ;; jupyter
   (require 'jupyter)
+  ;; quarto
+  (require 'quarto-mode)
   ;; space around
   (set-fringe-mode 20)
   ;; git-gutter+ config
