@@ -12,7 +12,9 @@ if exists('g:vscode')
     vmap < <gv
     " Yank from cursor to line end
     nnoremap Y y$
+    set clipboard+=unnamedplus
 else
+    set clipboard+=unnamedplus
     " Map up/down to scroll by visual lines
     imap <up> <C-O>gk
     imap <down> <C-O>gj
