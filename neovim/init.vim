@@ -109,8 +109,6 @@ else
     Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
     " LaTeX equations to ASCII
     Plug 'jbyuki/nabla.nvim'
-    " Org mode
-    Plug 'nvim-neorg/neorg'
 
     "   " Any valid git URL is allowed
     "   Plug 'https://github.com/junegunn/vim-github-dashboard.git'
@@ -354,24 +352,6 @@ EOF
     "--------------------------------------------------------------------------
 lua << EOF
     require('telescope').setup{}
-EOF
-    "--------------------------------------------------------------------------
-    " Lua setup for org mode
-    "--------------------------------------------------------------------------
-lua << EOF
-require('neorg').setup {
-    load = {
-        ["core.defaults"] = {}, -- Loads default behaviour
-        ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
-        ["core.norg.dirman"] = { -- Manages Neorg workspaces
-            config = {
-                workspaces = {
-                    notes = "~/notes",
-                },
-            },
-        },
-    },
-}
 EOF
     "==========================================================================
     "General
