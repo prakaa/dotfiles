@@ -32,10 +32,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(rust
      (auto-completion :variables
-                      auto-completion-enable-help-tooltip t
-                      spacemacs-default-company-backends '(company-files company-capf))
+                      auto-completion-enable-help-tooltip t)
      bibtex
      ;; better-defaults
      emacs-lisp
@@ -44,7 +43,7 @@ This function should only modify configuration layer settings."
      (julia :variables
             julia-backend 'lsp)
      latex
-     lsp
+     (lsp :variables lsp-rust-server 'rust-analyzer)
      markdown
      (org :variables
           org-enable-org-journal-support t
@@ -53,13 +52,17 @@ This function should only modify configuration layer settings."
           org-journal-date-prefix "#+TITLE: "
           org-journal-date-format "%A, %B %d %Y"
           org-journal-time-prefix "* "
-          org-journal-time-format "%H:%M")
+          org-journal-time-format "%H:%M"
+          org-enable-roam-support t
+          )
      pandoc
      pdf
-     python
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
+     (python :variables
+             python-formatter 'black)
+     rust
      spell-checking
      spacemacs-org
      spacemacs-visual
@@ -271,7 +274,7 @@ It should only modify the values of Spacemacs settings."
    ;; refer to the DOCUMENTATION.org for more info on how to create your own
    ;; spaceline theme. Value can be a symbol or list with additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(doom :separator wave :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -445,13 +448,13 @@ It should only modify the values of Spacemacs settings."
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
    dotspacemacs-line-numbers
-    '(
-      :disabled-for-modes dired-mode
-                          doc-view-mode
-                          org-mode
-                          pdf-view-mode
-                          text-mode
-      :size-limit-kb 1000)
+   '(
+     :disabled-for-modes dired-mode
+     doc-view-mode
+     org-mode
+     pdf-view-mode
+     text-mode
+     :size-limit-kb 1000)
    ;; Code folding method. Possible values are `evil', `origami' and `vimish'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -573,7 +576,7 @@ default it calls `spacemacs/load-spacemacs-env' which loads the environment
 variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
 See the header of this file for more information."
   (spacemacs/load-spacemacs-env)
-)
+  )
 
 (defun dotspacemacs/user-init ()
   "Initialization for user code:
@@ -588,7 +591,9 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (add-hook 'markdown-mode-hook 'visual-line-mode)
   ;; visual fill column mode puts everything in a column
   (add-hook 'visual-line-mode-hook #'visual-fill-column-mode)
-)
+  ;; Python line at 80 chars
+  (add-hook 'python-mode-hook #'display-fill-column-indicator-mode)
+  )
 
 
 (defun dotspacemacs/user-load ()
@@ -596,7 +601,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 This function is called only while dumping Spacemacs configuration. You can
 `require' or `load' the libraries of your choice that will be included in the
 dump."
-)
+  )
 
 
 (defun dotspacemacs/user-config ()
@@ -606,7 +611,7 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
   (defun general-config ()
-  )
+    )
   ;; Make evil-mode up/down operate in screen lines instead of logical lines
   (define-key evil-motion-state-map "j" 'evil-next-visual-line)
   (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
@@ -628,6 +633,8 @@ before packages are loaded."
   (set-face-foreground 'git-gutter+-deleted "red")
   ;; visual fill column mode puts everything in a column
   (setq visual-fill-column-width 100)
+  ;; org-roam config
+  (setq org-roam-directory (file-truename "~/Dropbox/org/org-roam"))
 
   ;; bibliography location
   (setq bibtex-completion-bibliography '("~/version_control/ResearchNotes/zoterolibrary.bib"
@@ -643,63 +650,63 @@ before packages are loaded."
   (setq bibtex-completion-cite-prompt-for-optional-arguments nil)
   (define-key global-map (kbd "C-c i") 'helm-bibtex)
   (with-eval-after-load 'helm-bibtex
-  (helm-delete-action-from-source "Insert citation" helm-source-bibtex)
-  (helm-add-action-to-source "Insert citation" 'helm-bibtex-insert-citation helm-source-bibtex 0)
-  )
+    (helm-delete-action-from-source "Insert citation" helm-source-bibtex)
+    (helm-add-action-to-source "Insert citation" 'helm-bibtex-insert-citation helm-source-bibtex 0)
+    )
   ;; Org mode config
   (with-eval-after-load 'org
-  ;; here goes your Org config :)
-  (setq org-hide-emphasis-markers t)
-  (setq org-ellipsis "  ▼")
-  (setq org-startup-indented t)
-  ;; agenda config
-  (setq org-agenda-files '("~/Dropbox/org"))
-  (setq org-agenda-start-with-log-mode t)
-  (setq org-log-into-drawer t)
-  (setq org-journal-enable-agenda-integration t)
-  ;; babel config
-  (org-babel-do-load-languages
-   'org-babel-load-languages '(
-                               (C . t)
-                               (python . t)
-                               (julia . t)
-                               (jupyter . t)
-                               )
-   )
-  )
+    ;; here goes your Org config :)
+    (setq org-hide-emphasis-markers t)
+    (setq org-ellipsis "  ▼")
+    (setq org-startup-indented t)
+    ;; agenda config
+    (setq org-agenda-files '("~/Dropbox/org"))
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-into-drawer t)
+    (setq org-journal-enable-agenda-integration t)
+    ;; babel config
+    (org-babel-do-load-languages
+     'org-babel-load-languages '(
+                                 (C . t)
+                                 (python . t)
+                                 (julia . t)
+                                 (jupyter . t)
+                                 )
+     )
+    )
   ;; LaTeX PDF output
   (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 
   ;; capture templates
   (setq org-default-notes-file (concat org-directory "~/Dropbox/org/notes.org"))
   (defun org-journal-find-location ()
-                                    ;; Open today's journal, but specify a non-nil prefix argument in order to
-                                    ;; inhibit inserting the heading; org-capture will insert the heading.
-                                    (org-journal-new-entry t)
-                                    (unless (eq org-journal-file-type 'daily)
-                                      (org-narrow-to-subtree))
-                                    (goto-char (point-max)))
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    (org-journal-new-entry t)
+    (unless (eq org-journal-file-type 'daily)
+      (org-narrow-to-subtree))
+    (goto-char (point-max)))
   (setq org-capture-templates
-      `(("t" "Tasks / Projects")
-        ("tt" "Task" entry (file+olp "~/Dropbox/org/tasks.org" "Inbox")
-            "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
-        ("j" "Journal entry" plain (function org-journal-find-location)
-         "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-         :jump-to-captured t :immediate-finish t)
-        ("n" "Note"
-         entry (file+headline "~/Dropbox/org/notes.org" "Random Notes")
-         "** %?"
-         :empty-lines 0)
-        ("m" "Meeting"
-          entry (file+datetree "~/Dropbox/org/meetings.org")
-          "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
-          :tree-type week
-          :clock-in t
-          :clock-resume t
-          :empty-lines 0)
+        `(("t" "Tasks / Projects")
+          ("tt" "Task" entry (file+olp "~/Dropbox/org/tasks.org" "Inbox")
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+          ("j" "Journal entry" plain (function org-journal-find-location)
+           "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+           :jump-to-captured t :immediate-finish t)
+          ("n" "Note"
+           entry (file+headline "~/Dropbox/org/notes.org" "Random Notes")
+           "** %?"
+           :empty-lines 0)
+          ("m" "Meeting"
+           entry (file+datetree "~/Dropbox/org/meetings.org")
+           "* %? :meeting:%^g \n:Created: %T\n** Attendees\n*** \n** Notes\n** Action Items\n*** TODO [#A] "
+           :tree-type week
+           :clock-in t
+           :clock-resume t
+           :empty-lines 0)
+          )
         )
   )
-)
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (defun dotspacemacs/emacs-custom-settings ()
@@ -707,37 +714,37 @@ before packages are loaded."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-want-Y-yank-to-eol nil)
- '(ispell-dictionary nil)
- '(org-agenda-files
-   '("/home/abi/Dropbox/org/climbing.org" "/home/abi/Dropbox/org/meetings.org" "/home/abi/Dropbox/org/notes.org" "/home/abi/Dropbox/org/tasks.org"))
- '(package-selected-packages
-   '(emacsql-sqlite-module emacsql-sqlite bug-hunter afternoon-theme alect-themes all-the-icons ample-theme ample-zen-theme anaconda-mode anti-zenburn-theme apropospriate-theme auctex badwolf-theme birds-of-paradise-plus-theme bubbleberry-theme busybee-theme cherry-blossom-theme chocolate-theme clues-theme color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow company cyberpunk-theme dakrone-theme darkmine-theme darkokai-theme django-theme doom-themes dracula-theme espresso-theme smartparens exotica-theme eziam-themes farmhouse-themes flatland-theme flatui-theme flycheck package-lint helm yaml ghub closql emacsql gandalf-theme gotham-theme grandshell-theme gruber-darker-theme gruvbox-theme hc-zenburn-theme helm-core hemisu-theme heroku-theme inkpot-theme ir-black-theme jazz-theme jbeans-theme websocket kaolin-themes light-soap-theme lsp-mode treemacs posframe markdown-mode lush-theme madhat2r-theme magit git-commit with-editor magit-section material-theme minimal-theme modus-themes moe-theme molokai-theme monochrome-theme monokai-theme vterm mustang-theme niflheim-theme naquadah-theme noctilux-theme obsidian-theme occidental-theme oldlace-theme omtose-phellack-theme projectile parsebib organic-green-theme phoenix-dark-mono-theme phoenix-dark-pink-theme planet-theme transient compat professional-theme purple-haze-theme ht railscasts-theme rebecca-theme reverse-theme seti-theme smyx-theme soft-charcoal-theme soft-morning-theme soft-stone-theme solarized-theme soothe-theme spacegray-theme spaceline dash subatomic-theme subatomic256-theme sublime-themes sunny-day-theme tango-2-theme tango-plus-theme tangotango-theme tao-theme toxi-theme twilight-anti-bright-theme twilight-bright-theme twilight-theme ujelly-theme underwater-theme white-sand-theme zen-and-art-theme zenburn-theme zonokai-emacs async evil cargo counsel-gtags flycheck-rust ggtags helm-gtags racer ron-mode rust-mode toml-mode yaml-mode org-wild-notifier company-quickhelp magit-delta org-journal yatemplate counsel-projectile counsel dap-mode lsp-docker bui flyspell-correct-ivy ivy-avy ivy-bibtex ivy-hydra ivy-purpose ivy-xref ivy-yasnippet lsp-ivy smex swiper ivy wgrep org-cliplink org-contrib org-download org-mime org-pomodoro org-present org-projectile org-category-capture org-ref org-rich-yank org-superstar orgit-forge orgit org cmake-mode yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil tree-sitter-langs toc-org texfrag terminal-here term-cursor symon symbol-overlay string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle shell-pop restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pdf-view-restore pcre2el password-generator paradox pandoc-mode ox-pandoc overseer open-junk-file nose nameless multi-vterm multi-term multi-line mmm-mode markdown-toc macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-pyright lsp-origami lsp-latex lsp-julia lorem-ipsum live-py-mode link-hint julia-repl inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-c-yasnippet helm-bibtex helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md fuzzy forge font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word cython-mode company-reftex company-math company-auctex company-anaconda column-enforce-mode code-cells clean-aindent-mode citeproc centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk alert aggressive-indent ace-link ace-jump-helm-line ac-ispell)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(fixed-pitch ((t (:height 1.1 :family "Fira Code"))))
- '(highlight ((t (:background "tomato" :foreground "white"))))
- '(hl-line ((t (:background "slate gray" :foreground "black"))))
- '(org-block ((t (:inherit fixed-pitch))))
- '(org-code ((t (:inherit (shadow fixed-pitch)))))
- '(org-document-info ((t (:foreground "dark orange"))))
- '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
- '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
- '(org-link ((t (:foreground "royal blue" :underline t))))
- '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
- '(org-property-value ((t (:inherit fixed-pitch))) t)
- '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
- '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
- '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
- '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
- '(tooltip ((t (:background "dim gray" :foreground "black"))))
- '(variable-pitch ((t (:height 1.3 :family "Cantarell")))))
-)
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(evil-want-Y-yank-to-eol nil)
+   '(ispell-dictionary nil)
+   '(org-agenda-files
+     '("/home/abi/Dropbox/org/climbing.org" "/home/abi/Dropbox/org/meetings.org" "/home/abi/Dropbox/org/notes.org" "/home/abi/Dropbox/org/tasks.org" "/home/abi/Dropbox/journal/2023-08-31"))
+   '(package-selected-packages
+     '(gnu-elpa-keyring-update emacsql-sqlite-module emacsql-sqlite bug-hunter afternoon-theme alect-themes all-the-icons ample-theme ample-zen-theme anaconda-mode anti-zenburn-theme apropospriate-theme auctex badwolf-theme birds-of-paradise-plus-theme bubbleberry-theme busybee-theme cherry-blossom-theme chocolate-theme clues-theme color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow company cyberpunk-theme dakrone-theme darkmine-theme darkokai-theme django-theme doom-themes dracula-theme espresso-theme smartparens exotica-theme eziam-themes farmhouse-themes flatland-theme flatui-theme flycheck package-lint helm yaml ghub closql emacsql gandalf-theme gotham-theme grandshell-theme gruber-darker-theme gruvbox-theme hc-zenburn-theme helm-core hemisu-theme heroku-theme inkpot-theme ir-black-theme jazz-theme jbeans-theme websocket kaolin-themes light-soap-theme lsp-mode treemacs posframe markdown-mode lush-theme madhat2r-theme magit git-commit with-editor magit-section material-theme minimal-theme modus-themes moe-theme molokai-theme monochrome-theme monokai-theme vterm mustang-theme niflheim-theme naquadah-theme noctilux-theme obsidian-theme occidental-theme oldlace-theme omtose-phellack-theme projectile parsebib organic-green-theme phoenix-dark-mono-theme phoenix-dark-pink-theme planet-theme transient compat professional-theme purple-haze-theme ht railscasts-theme rebecca-theme reverse-theme seti-theme smyx-theme soft-charcoal-theme soft-morning-theme soft-stone-theme solarized-theme soothe-theme spacegray-theme spaceline dash subatomic-theme subatomic256-theme sublime-themes sunny-day-theme tango-2-theme tango-plus-theme tangotango-theme tao-theme toxi-theme twilight-anti-bright-theme twilight-bright-theme twilight-theme ujelly-theme underwater-theme white-sand-theme zen-and-art-theme zenburn-theme zonokai-emacs async evil cargo counsel-gtags flycheck-rust ggtags helm-gtags racer ron-mode rust-mode toml-mode yaml-mode org-wild-notifier company-quickhelp magit-delta org-journal yatemplate counsel-projectile counsel dap-mode lsp-docker bui flyspell-correct-ivy ivy-avy ivy-bibtex ivy-hydra ivy-purpose ivy-xref ivy-yasnippet lsp-ivy smex swiper ivy wgrep org-cliplink org-contrib org-download org-mime org-pomodoro org-present org-projectile org-category-capture org-ref org-rich-yank org-superstar orgit-forge orgit org cmake-mode yasnippet-snippets yapfify xterm-color ws-butler writeroom-mode winum which-key volatile-highlights vim-powerline vi-tilde-fringe uuidgen use-package undo-tree treemacs-projectile treemacs-persp treemacs-magit treemacs-icons-dired treemacs-evil tree-sitter-langs toc-org texfrag terminal-here term-cursor symon symbol-overlay string-edit-at-point sphinx-doc spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline-all-the-icons space-doc smeargle shell-pop restart-emacs request rainbow-delimiters quickrun pytest pylookup pyenv-mode pydoc py-isort popwin poetry pippel pipenv pip-requirements pdf-view-restore pcre2el password-generator paradox pandoc-mode ox-pandoc overseer open-junk-file nose nameless multi-vterm multi-term multi-line mmm-mode markdown-toc macrostep lsp-ui lsp-treemacs lsp-python-ms lsp-pyright lsp-origami lsp-latex lsp-julia lorem-ipsum live-py-mode link-hint julia-repl inspector info+ indent-guide importmagic hybrid-mode hungry-delete htmlize holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-xref helm-themes helm-swoop helm-pydoc helm-purpose helm-projectile helm-org-rifle helm-org helm-mode-manager helm-make helm-lsp helm-ls-git helm-git-grep helm-descbinds helm-company helm-c-yasnippet helm-bibtex helm-ag google-translate golden-ratio gnuplot gitignore-templates git-timemachine git-modes git-messenger git-link git-gutter-fringe gh-md fuzzy forge font-lock+ flyspell-correct-helm flycheck-pos-tip flycheck-package flycheck-elsa flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-tex evil-surround evil-org evil-numbers evil-nerd-commenter evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help emr elisp-slime-nav elisp-def editorconfig dumb-jump drag-stuff dotenv-mode dired-quick-sort diminish devdocs define-word cython-mode company-reftex company-math company-auctex company-anaconda column-enforce-mode code-cells clean-aindent-mode citeproc centered-cursor-mode browse-at-remote blacken auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile auctex-latexmk alert aggressive-indent ace-link ace-jump-helm-line ac-ispell)))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(fixed-pitch ((t (:height 1.1 :family "Consolas"))))
+   '(highlight ((t (:background "tomato" :foreground "white"))))
+   '(hl-line ((t (:background "slate gray" :foreground "black"))))
+   '(org-block ((t (:inherit fixed-pitch))))
+   '(org-code ((t (:inherit (shadow fixed-pitch)))))
+   '(org-document-info ((t (:foreground "dark orange"))))
+   '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
+   '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
+   '(org-link ((t (:foreground "royal blue" :underline t))))
+   '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-property-value ((t (:inherit fixed-pitch))) t)
+   '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+   '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
+   '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
+   '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
+   '(tooltip ((t (:background "dim gray" :foreground "black"))))
+   '(variable-pitch ((t (:height 1.3 :family "Cantarell")))))
+  )
