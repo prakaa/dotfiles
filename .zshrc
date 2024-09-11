@@ -8,6 +8,9 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 
+# NeoVim
+export PATH="$PATH:/opt/nvim-linux64/bin"
+
 # Julia
 export JULIA_NUM_THREADS=15
 
@@ -38,6 +41,7 @@ export PATH
 
 # completion options
 zstyle ':completion:*' menu select
+bindkey '^[[Z' reverse-menu-complete
 
 # forward and backward words
 bindkey "^[[1;5C" forward-word
