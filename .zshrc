@@ -16,13 +16,6 @@ export PATH="$PATH:/opt/nvim-linux64/bin"
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~zsh Configuration~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# auto suggestions
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# syntax highlighting
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # Aliases
 alias n="nvim"
 alias ls="eza"
@@ -80,6 +73,12 @@ export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${GUROBI_HOME}/lib"
 
 # Go
 export PATH=$PATH:/usr/local/go/bin
+
+# auto suggestions
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# syntax highlighting
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Zoxide
 eval "$(zoxide init zsh)"
